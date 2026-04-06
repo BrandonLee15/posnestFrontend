@@ -5,6 +5,8 @@ import 'react-calendar/dist/Calendar.css'
 import { format} from 'date-fns'
 import { useQuery } from "@tanstack/react-query"
 import { getSalesByDate } from "@/src/api"
+import TransactionSummary from "./TransactionSummary"
+import { formatCurrency } from "@/src/utils"
 
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
@@ -19,20 +21,30 @@ export default function TransactionFilter() {
             queryFn: () => getSalesByDate(formattedDate)
     })
 
-    console.log(data)
-    console.log(isLoading)
+    const total = data?.reduce((total, transaction) => total + +transaction.total, 0) ?? 0
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-10">
-        <div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-10 relative items-start">
+        <div className="lg:sticky lg:top-10">
             <Calendar 
                 value={date}
                 onChange={setDate}
+                locale="es"
             />
         </div>
 
         <div>
+            {isLoading && 'cargando...'}
+            {data? data.length ? data.map(transaction => (
+              <TransactionSummary
+                key={transaction.id}
+                transaction = {transaction}
+              />
+            )) : <p className="text-lg text-center">No hay ventas en esta fecha</p> : null}
 
+            <p className="my-5 text-lg font-bold text-right"> total del dia: {''}
+              <span className="font-normal">{formatCurrency(total)}</span>
+            </p>
         </div>
     </div>
   )

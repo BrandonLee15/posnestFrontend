@@ -6,7 +6,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'process.env.DOMAIN'
+        hostname: 'process.env.DOMAIN!'
+      },
+       {
+        protocol: 'https',
+        hostname: 'process.env.DOMAIN!'
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com'
       }
     ]
   }
